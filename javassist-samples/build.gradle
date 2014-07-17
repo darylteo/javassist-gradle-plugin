@@ -22,7 +22,7 @@ class MyTransformation extends ClassTransformation {
   }
 
   @Override
-  public boolean filter(CtClass clazz) {
+  public boolean shouldFilter(CtClass clazz) {
     return clazz.getName().equals("MyClass2");
   }
 }
