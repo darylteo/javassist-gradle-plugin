@@ -81,7 +81,7 @@ class TransformationAction implements CopyAction {
         if (!details.isDirectory()) {
           CtClass clazz = loadClassFile(details.getFile());
 
-          if (this.transformation.shouldFilter(clazz)) {
+          if (this.transformation.shouldTransform(clazz)) {
             clazz.defrost();
             this.transformation.applyTransformations(clazz);
             clazz.writeFile(this.destinationDir);

@@ -26,7 +26,7 @@ public class GroovyClassTransformation extends ClassTransformation {
   }
 
   @Override
-  public boolean shouldFilter(CtClass clazz) {
+  public boolean shouldTransform(CtClass clazz) {
     return this.filter == null || (boolean) this.filter.call(clazz);
   }
 

@@ -12,7 +12,7 @@ public class ClassTransformation implements ClassFilter, ClassTransformationFunc
   }
 
   @Override
-  public boolean shouldFilter(CtClass clazz) {
+  public boolean shouldTransform(CtClass clazz) {
     return true;
   }
 }
