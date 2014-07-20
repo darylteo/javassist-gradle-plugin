@@ -1,9 +1,9 @@
 apply from: rootProject.file('gradle/plugin.gradle')
 
-version = '0.2.0'
+version = '0.2.1'
 
 dependencies {
-  compile 'org.javassist:javassist:3.18.1-GA'
+  compile 'org.javassist:javassist:3.18.2-GA'
 }
 
 uploadArchives {

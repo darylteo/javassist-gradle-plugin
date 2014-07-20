@@ -6,7 +6,7 @@ import javassist.CtClass;
 /**
  * Created by dteo on 28/05/2014.
  */
-public class GroovyClassTransformation extends ClassTransformation {
+public class GroovyClassTransformation extends ClassTransformer {
   private Closure transform;
   private Closure filter;
 

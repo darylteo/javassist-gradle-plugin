@@ -5,17 +5,17 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.darylteo.gradle:javassist-plugin:0.2.0'
+    classpath 'com.darylteo.gradle:javassist-plugin:0.2.1'
   }
 }
 
 import com.darylteo.gradle.javassist.tasks.TransformationTask
-import com.darylteo.gradle.javassist.transformers.ClassTransformation
+import com.darylteo.gradle.javassist.transformers.ClassTransformer
 import javassist.CtClass
 
 apply plugin: 'java'
 
-class MyTransformation extends ClassTransformation {
+class MyTransformation extends ClassTransformer {
   @Override
   public void applyTransformations(CtClass clazz) throws Exception {
     clazz.setName("test.package." + clazz.getName());

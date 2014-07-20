@@ -1,6 +1,6 @@
 package com.darylteo.gradle.javassist.tasks;
 
-import com.darylteo.gradle.javassist.transformers.ClassTransformation;
+import com.darylteo.gradle.javassist.transformers.ClassTransformer;
 import com.darylteo.gradle.javassist.transformers.GroovyClassTransformation;
 import groovy.lang.Closure;
 import org.gradle.api.internal.file.copy.CopyAction;
@@ -21,22 +21,22 @@ public class TransformationTask extends AbstractCopyTask {
     this.destinationDir = destinationDir;
   }
 
-  private ClassTransformation transformation;
+  private ClassTransformer transformation;
 
-  public ClassTransformation getTransformation() {
+  public ClassTransformer getTransformation() {
     return transformation;
   }
 
-  public void setTransformation(ClassTransformation transformation) {
+  public void setTransformation(ClassTransformer transformation) {
     this.transformation = transformation;
   }
 
-  public ClassTransformation transform(Closure closure) {
+  public ClassTransformer transform(Closure closure) {
     this.transformation = new GroovyClassTransformation(closure);
     return this.transformation;
   }
 
-  public ClassTransformation where(Closure closure) {
+  public ClassTransformer where(Closure closure) {
     this.transformation = new GroovyClassTransformation(null, closure);
     return this.transformation;
   }

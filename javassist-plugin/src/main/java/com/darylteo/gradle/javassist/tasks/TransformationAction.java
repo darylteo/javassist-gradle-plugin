@@ -1,6 +1,6 @@
 package com.darylteo.gradle.javassist.tasks;
 
-import com.darylteo.gradle.javassist.transformers.ClassTransformation;
+import com.darylteo.gradle.javassist.transformers.ClassTransformer;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -24,11 +24,11 @@ class TransformationAction implements CopyAction {
 
   private String destinationDir;
 
-  private ClassTransformation transformation;
+  private ClassTransformer transformation;
 
   private List<File> sources = new LinkedList<>();
 
-  public TransformationAction(String destinationDir, Collection<File> sources, ClassTransformation transformation) {
+  public TransformationAction(String destinationDir, Collection<File> sources, ClassTransformer transformation) {
     this.destinationDir = destinationDir;
     this.sources.addAll(sources);
 
@@ -64,11 +64,11 @@ class TransformationAction implements CopyAction {
   private class LoaderAction implements CopyActionProcessingStreamAction {
     private final ClassPool pool;
 
-    private ClassTransformation transformation;
+    private ClassTransformer transformation;
 
     private final String destinationDir;
 
-    public LoaderAction(ClassPool pool, String destinationDir, ClassTransformation transformation) {
+    public LoaderAction(ClassPool pool, String destinationDir, ClassTransformer transformation) {
       this.pool = pool;
       this.destinationDir = destinationDir;
 
