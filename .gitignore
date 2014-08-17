@@ -14,6 +14,7 @@ out
 *.iml
 *.ipr
 *.iws
+local.properties
 test-output
 Scratch.java
 ScratchTest.java
