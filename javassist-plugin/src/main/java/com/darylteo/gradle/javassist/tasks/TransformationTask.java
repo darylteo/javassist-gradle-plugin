@@ -3,7 +3,7 @@ package com.darylteo.gradle.javassist.tasks;
 import com.darylteo.gradle.javassist.transformers.ClassTransformer;
 import com.darylteo.gradle.javassist.transformers.GroovyClassTransformation;
 import groovy.lang.Closure;
-import org.gradle.api.file.FileCollection;
+import java.util.Collection;
 import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.tasks.SimpleWorkResult;
@@ -38,14 +38,14 @@ public class TransformationTask extends AbstractCopyTask {
     this.transformation = transformation;
   }
 
-  private FileCollection classpath;
+  private Collection<File> classpath;
 
   @InputFiles
-  public FileCollection getClasspath() {
+  public Collection<File> getClasspath() {
     return this.classpath;
   }
 
-  public void setClasspath(FileCollection classpath) {
+  public void setClasspath(Collection<File> classpath) {
     this.classpath = classpath;
   }
 
@@ -61,7 +61,7 @@ public class TransformationTask extends AbstractCopyTask {
 
   public TransformationTask() {
     // empty classpath
-    this.classpath = this.getProject().files();
+    this.classpath = this.getProject().files().getFiles();
     this.destinationDir = Paths.get(this.getProject().getBuildDir().toString(), "transformations", this.getName()).toFile();
   }
 
@@ -78,7 +78,7 @@ public class TransformationTask extends AbstractCopyTask {
       };
     }
 
-    return new TransformationAction(this.destinationDir, this.getSource().getFiles(), this.classpath.getFiles(), this.transformation);
+    return new TransformationAction(this.destinationDir, this.getSource().getFiles(), this.classpath, this.transformation);
   }
 
 }
