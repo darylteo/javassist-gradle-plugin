@@ -1,48 +1,53 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-def release = !project.version.endsWith('-SNAPSHOT')
-def sonatypeUsername = project.hasProperty('sonatypeUsername') ? project.sonatypeUsername : '';
-def sonatypePassword = project.hasProperty('sonatypePassword') ? project.sonatypePassword: '';
+project.afterEvaluate {
 
-configurations {
-  archives
-}
+  def release = !project.version.endsWith('-SNAPSHOT')
+  def sonatypeUsername = project.hasProperty('sonatypeUsername') ? project.sonatypeUsername : '';
+  def sonatypePassword = project.hasProperty('sonatypePassword') ? project.sonatypePassword: '';
 
-task sourcesJar(type:Jar) {
-  from sourceSets.main.allSource
-  classifier = 'sources'
-}
+  configurations {
+    archives
+  }
 
-task javadocJar(type:Jar) {
-  from javadoc
-  classifier = 'javadoc'
-}
+  task sourcesJar(type:Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+  }
 
-artifacts {
-  archives sourcesJar
-  archives javadocJar
-}
+  task javadocJar(type:Jar) {
+    from javadoc
+    classifier = 'javadoc'
+  }
 
-signing {
-  required { release && gradle.taskGraph.hasTask('uploadArchives') }
-  sign configurations.archives
-}
+  artifacts {
+    archives sourcesJar
+    archives javadocJar
+  }
 
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      def url = !release ? 'https://oss.sonatype.org/content/repositories/snapshots/' : 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+  signing {
+    required { release && gradle.taskGraph.hasTask('uploadArchives') }
+    sign configurations.archives
+  }
 
-      repository(url: url) {
-        authentication(userName: sonatypeUsername, password : sonatypePassword)
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+        def url = !release ? 'https://oss.sonatype.org/content/repositories/snapshots/' : 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+
+        repository(url: url) {
+          authentication(userName: sonatypeUsername, password : sonatypePassword)
+        }
+
+        beforeDeployment { dep ->
+          signing.signPom(dep)
+        }
+
+        uniqueVersion = false
+        configuration = configurations.archives
       }
-
-      beforeDeployment { dep ->
-        signing.signPom(dep)
-      }
-
-      configuration = configurations.archives
     }
   }
+
 }
