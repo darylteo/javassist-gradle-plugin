@@ -1,9 +1,9 @@
 package com.darylteo.gradle.javassist.tasks;
 
-import com.darylteo.gradle.javassist.transformers.ClassTransformer;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import javassist.build.IClassTransformer;
 import org.gradle.api.GradleException;
 import org.gradle.api.internal.file.CopyActionProcessingStreamAction;
 import org.gradle.api.internal.file.copy.CopyAction;
@@ -22,23 +22,23 @@ import java.util.List;
  */
 class TransformationAction implements CopyAction {
 
-  private String destinationDir;
+  private File destinationDir;
+  private IClassTransformer transformation;
 
-  private ClassTransformer transformation;
+  private List<File> sources = new LinkedList<File>();
+  private Collection<File> classpath = new LinkedList<File>();
 
-  private List<File> sources = new LinkedList<>();
-
-  public TransformationAction(String destinationDir, Collection<File> sources, ClassTransformer transformation) {
+  public TransformationAction(File destinationDir, Collection<File> sources, Collection<File> classpath, IClassTransformer transformation) {
     this.destinationDir = destinationDir;
     this.sources.addAll(sources);
-
+    this.classpath.addAll(classpath);
     this.transformation = transformation;
   }
 
   @Override
   public WorkResult execute(CopyActionProcessingStream stream) {
     try {
-      final ClassPool pool = createPool(this.sources);
+      final ClassPool pool = createPool();
       final LoaderAction action = new LoaderAction(pool, destinationDir, this.transformation);
 
       stream.process(action);
@@ -49,28 +49,32 @@ class TransformationAction implements CopyAction {
     return new SimpleWorkResult(true);
   }
 
-  private ClassPool createPool(List<File> classpath) throws NotFoundException {
+  private ClassPool createPool() throws NotFoundException {
     final ClassPool pool = new ClassPool(true);
 
     // set up the classpath for the classpool
+    if (classpath != null) {
+      for (File f : this.classpath) {
+        pool.appendClassPath(f.toString());
+      }
+    }
+
+    // add the files to process
     for (File f : this.sources) {
       pool.appendClassPath(f.toString());
     }
-
     return pool;
   }
 
   // preloads all class files into the classpool and stores a list of class names
   private class LoaderAction implements CopyActionProcessingStreamAction {
     private final ClassPool pool;
-
-    private ClassTransformer transformation;
-
     private final String destinationDir;
+    private IClassTransformer transformation;
 
-    public LoaderAction(ClassPool pool, String destinationDir, ClassTransformer transformation) {
+    public LoaderAction(ClassPool pool, File destinationDir, IClassTransformer transformation) {
       this.pool = pool;
-      this.destinationDir = destinationDir;
+      this.destinationDir = destinationDir.toString();
 
       this.transformation = transformation;
     }
