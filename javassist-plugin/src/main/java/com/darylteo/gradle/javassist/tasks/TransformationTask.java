@@ -3,21 +3,28 @@ package com.darylteo.gradle.javassist.tasks;
 import com.darylteo.gradle.javassist.transformers.ClassTransformer;
 import com.darylteo.gradle.javassist.transformers.GroovyClassTransformation;
 import groovy.lang.Closure;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.tasks.SimpleWorkResult;
 import org.gradle.api.tasks.AbstractCopyTask;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.WorkResult;
+
+import java.io.File;
+import java.nio.file.Paths;
 
 public class TransformationTask extends AbstractCopyTask {
 
-  private String destinationDir;
+  private File destinationDir;
 
-  public String getDestinationDir() {
+  @OutputDirectory
+  public File getDestinationDir() {
     return destinationDir;
   }
 
-  public void setDestinationDir(String destinationDir) {
+  public void setDestinationDir(File destinationDir) {
     this.destinationDir = destinationDir;
   }
 
@@ -31,6 +38,17 @@ public class TransformationTask extends AbstractCopyTask {
     this.transformation = transformation;
   }
 
+  private FileCollection classpath;
+
+  @InputFiles
+  public FileCollection getClasspath() {
+    return this.classpath;
+  }
+
+  public void setClasspath(FileCollection classpath) {
+    this.classpath = classpath;
+  }
+
   public ClassTransformer transform(Closure closure) {
     this.transformation = new GroovyClassTransformation(closure);
     return this.transformation;
@@ -42,6 +60,9 @@ public class TransformationTask extends AbstractCopyTask {
   }
 
   public TransformationTask() {
+    // empty classpath
+    this.classpath = this.getProject().files();
+    this.destinationDir = Paths.get(this.getProject().getBuildDir().toString(), "transformations", this.getName()).toFile();
   }
 
   @Override
@@ -57,12 +78,7 @@ public class TransformationTask extends AbstractCopyTask {
       };
     }
 
-    String dir = this.destinationDir;
-    if (dir == null) {
-      dir = String.format("%s/transformations/%s", this.getProject().getBuildDir(), this.getName());
-    }
-
-    return new TransformationAction(dir, this.getSource().getFiles(), this.transformation);
+    return new TransformationAction(this.destinationDir, this.getSource().getFiles(), this.classpath.getFiles(), this.transformation);
   }
 
 }

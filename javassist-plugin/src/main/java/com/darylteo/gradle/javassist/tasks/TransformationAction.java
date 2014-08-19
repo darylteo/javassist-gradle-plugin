@@ -22,15 +22,18 @@ import java.util.List;
  */
 class TransformationAction implements CopyAction {
 
-  private String destinationDir;
+  private File destinationDir;
 
   private ClassTransformer transformation;
 
-  private List<File> sources = new LinkedList<>();
+  private List<File> sources = new LinkedList<File>();
 
-  public TransformationAction(String destinationDir, Collection<File> sources, ClassTransformer transformation) {
+  private List<File> classpath = new LinkedList<File>();
+
+  public TransformationAction(File destinationDir, Collection<File> sources, Collection<File> classpath, ClassTransformer transformation) {
     this.destinationDir = destinationDir;
     this.sources.addAll(sources);
+    this.classpath.addAll(classpath);
 
     this.transformation = transformation;
   }
@@ -53,6 +56,10 @@ class TransformationAction implements CopyAction {
     final ClassPool pool = new ClassPool(true);
 
     // set up the classpath for the classpool
+    for (File f : this.classpath) {
+      pool.appendClassPath(f.toString());
+    }
+
     for (File f : this.sources) {
       pool.appendClassPath(f.toString());
     }
@@ -68,9 +75,9 @@ class TransformationAction implements CopyAction {
 
     private final String destinationDir;
 
-    public LoaderAction(ClassPool pool, String destinationDir, ClassTransformer transformation) {
+    public LoaderAction(ClassPool pool, File destinationDir, ClassTransformer transformation) {
       this.pool = pool;
-      this.destinationDir = destinationDir;
+      this.destinationDir = destinationDir.toString();
 
       this.transformation = transformation;
     }

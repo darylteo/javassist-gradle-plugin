@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.darylteo.gradle:javassist-plugin:0.2.1'
+    classpath 'com.darylteo.gradle:javassist-plugin:0.2.2-SNAPSHOT'
   }
 }
 
@@ -14,6 +14,14 @@ import com.darylteo.gradle.javassist.transformers.ClassTransformer
 import javassist.CtClass
 
 apply plugin: 'java'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.slf4j:slf4j-api:1.7.+'
+}
 
 class MyTransformation extends ClassTransformer {
   @Override
@@ -36,7 +44,6 @@ task transform1(type: TransformationTask) {
 // transformation
 task transform2(type: TransformationTask) {
   from sourceSets.main.output
-  into("${buildDir}/transforms/transform1")
 
   transform { c ->
     c.name = "test.package.${c.name}"
@@ -46,7 +53,6 @@ task transform2(type: TransformationTask) {
 // transformation with filter
 task transform3(type: TransformationTask) {
   from sourceSets.main.output
-  into("${buildDir}/transforms/transform1")
 
   where { c ->
     c.name == 'MyClass2'
@@ -57,8 +63,9 @@ task transform3(type: TransformationTask) {
 
 // transformation with transformation class
 task transform4(type: TransformationTask) {
+  classpath += configurations.compile
+
   from sourceSets.main.output
-  into("${buildDir}/transforms/transform1")
 
   transformation = new MyTransformation()
 }
