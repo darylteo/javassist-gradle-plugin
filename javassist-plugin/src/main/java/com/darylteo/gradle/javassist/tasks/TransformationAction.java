@@ -60,6 +60,7 @@ class TransformationAction implements CopyAction {
       pool.appendClassPath(f.toString());
     }
 
+    //add files to transform to the classpool
     for (File f : this.sources) {
       pool.appendClassPath(f.toString());
     }
