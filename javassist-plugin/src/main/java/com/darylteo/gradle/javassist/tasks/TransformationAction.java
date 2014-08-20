@@ -1,9 +1,9 @@
 package com.darylteo.gradle.javassist.tasks;
 
-import javassist.build.*;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import javassist.build.IClassTransformer;
 import org.gradle.api.GradleException;
 import org.gradle.api.internal.file.CopyActionProcessingStreamAction;
 import org.gradle.api.internal.file.copy.CopyAction;

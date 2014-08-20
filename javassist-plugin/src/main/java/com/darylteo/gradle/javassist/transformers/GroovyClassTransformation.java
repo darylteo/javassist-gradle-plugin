@@ -2,7 +2,7 @@ package com.darylteo.gradle.javassist.transformers;
 
 import groovy.lang.Closure;
 import javassist.CtClass;
-import javassist.build.*;
+import javassist.build.JavassistBuildException;
 
 /**
  * Created by dteo on 28/05/2014.
@@ -31,7 +31,7 @@ public class GroovyClassTransformation extends ClassTransformer {
     return this.filter == null || (Boolean) this.filter.call(clazz);
   }
 
-  public void transform(Closure transform) throws JavassistBuildException  {
+  public void transform(Closure transform) {
     this.transform = transform;
   }
 

@@ -9,6 +9,7 @@ import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.tasks.SimpleWorkResult;
 import org.gradle.api.tasks.AbstractCopyTask;
+import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.WorkResult;
 
@@ -40,6 +41,7 @@ public class TransformationTask extends AbstractCopyTask {
 
   private FileCollection classpath;
 
+  @InputFiles
   public FileCollection getClasspath() {
     return this.classpath;
   }
