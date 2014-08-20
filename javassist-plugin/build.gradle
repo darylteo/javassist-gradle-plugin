@@ -7,16 +7,47 @@ dependencies {
   compile 'com.github.stephanenicolas.javassist:javassist-build-plugin-api:1.0.0'
 }
 
+def info = {
+  project {
+    name 'Javassist Gradle Plugin'
+    description 'Plugin Task that facilitates Javassist bytecode generation'
+    inceptionYear '2013'
+
+    developers {
+      developer {
+        id 'darylteo'
+        name 'Daryl Teo'
+        email 'i.am@darylteo.com'
+        url 'http://darylteo.com'
+        roles {
+          role 'owner'
+        }
+      }
+
+      developer {
+        id 'stephanenicolas'
+        name 'Stéphane Nicolas'
+        url 'https://github.com/stephanenicolas'
+        roles {
+          role 'contributor'
+        }
+      }
+    }
+  }
+}
+
 uploadArchives {
   repositories {
     mavenDeployer {
-      pom {
-        project {
-          name 'Javassist Gradle Plugin'
-          description 'Plugin Task that facilitates Javassist bytecode generation'
-          inceptionYear '2013'
-        }
-      }
+      pom info
+    }
+  }
+}
+
+install {
+  repositories {
+    mavenInstaller {
+      pom info
     }
   }
 }
