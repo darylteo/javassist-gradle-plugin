@@ -1,9 +1,10 @@
 apply from: rootProject.file('gradle/plugin.gradle')
 
-version = '0.2.1'
+version = '0.3.0'
 
 dependencies {
   compile 'org.javassist:javassist:3.18.2-GA'
+  compile 'com.github.stephanenicolas.javassist:javassist-build-plugin-api:1.0.0'
 }
 
 uploadArchives {
@@ -12,7 +13,7 @@ uploadArchives {
       pom {
         project {
           name 'Javassist Gradle Plugin'
-          description 'Plugin Task that faciliates Javassist bytecode generation'
+          description 'Plugin Task that facilitates Javassist bytecode generation'
           inceptionYear '2013'
         }
       }
