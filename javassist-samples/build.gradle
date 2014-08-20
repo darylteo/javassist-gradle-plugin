@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.darylteo.gradle:javassist-plugin:0.2.2-SNAPSHOT'
+    classpath 'com.darylteo.gradle:javassist-plugin:0.3.0'
   }
 }
 
