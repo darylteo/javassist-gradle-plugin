@@ -1,5 +1,7 @@
 # Javassist Gradle Plugin
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.darylteo.gradle/javassist-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.darylteo.gradle/javassist-plugin/)
+
 ## Also See
 
 [Javassist Maven Plugin](//github.com/icon-Systemhaus-GmbH/javassist-maven-plugin)
