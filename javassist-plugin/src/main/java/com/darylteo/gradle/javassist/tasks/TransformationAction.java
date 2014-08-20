@@ -23,11 +23,9 @@ import java.util.List;
 class TransformationAction implements CopyAction {
 
   private File destinationDir;
-
   private IClassTransformer transformation;
 
   private List<File> sources = new LinkedList<File>();
-
   private Collection<File> classpath = new LinkedList<File>();
 
   public TransformationAction(File destinationDir, Collection<File> sources, Collection<File> classpath, IClassTransformer transformation) {
@@ -71,10 +69,8 @@ class TransformationAction implements CopyAction {
   // preloads all class files into the classpool and stores a list of class names
   private class LoaderAction implements CopyActionProcessingStreamAction {
     private final ClassPool pool;
-
-    private IClassTransformer transformation;
-
     private final String destinationDir;
+    private IClassTransformer transformation;
 
     public LoaderAction(ClassPool pool, File destinationDir, IClassTransformer transformation) {
       this.pool = pool;
