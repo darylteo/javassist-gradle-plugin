@@ -2,3 +2,7 @@ language: java
 jdk:
  - oraclejdk7
  - oraclejdk8
+
+script:
+ - ./gradlew --configure-on-demand javassist-plugin:install
+ - ./gradlew javassist-samples:testTransforms

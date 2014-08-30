@@ -69,3 +69,10 @@ task transform4(type: TransformationTask) {
 
   transformation = new MyTransformation()
 }
+
+task testTransforms {
+  dependsOn transform1
+  dependsOn transform2
+  dependsOn transform3
+  dependsOn transform4
+}
