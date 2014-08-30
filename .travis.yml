@@ -3,7 +3,11 @@ jdk:
  - oraclejdk7
  - oraclejdk8
 
+env:
+- TERM=dumb
+
 script:
  - ./gradlew --configure-on-demand javassist-plugin:install
+ - ./gradlew javassist-plugin:check
  - ./gradlew javassist-samples:testTransforms
- - ./gradlew javassist-plugin:jacocoTestReport javassist-plugin:coveralls
+ - ./gradlew jacocoTestReport coveralls
