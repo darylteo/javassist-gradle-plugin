@@ -24,12 +24,10 @@ dependencies {
 }
 
 class MyTransformation extends ClassTransformer {
-  @Override
   public void applyTransformations(CtClass clazz) throws Exception {
     clazz.setName("test.package." + clazz.getName());
   }
 
-  @Override
   public boolean shouldFilter(CtClass clazz) {
     return clazz.getName().equals("MyClass2");
   }

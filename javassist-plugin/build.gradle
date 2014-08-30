@@ -1,4 +1,17 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.0'
+  }
+}
+
 apply from: rootProject.file('gradle/plugin.gradle')
+
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 version = '0.3.0'
 
@@ -49,5 +62,12 @@ install {
     mavenInstaller {
       pom info
     }
+  }
+}
+
+jacocoTestReport {
+  reports {
+    xml.enabled = true // coveralls plugin depends on xml format report
+    html.enabled = true
   }
 }

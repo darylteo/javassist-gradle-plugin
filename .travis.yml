@@ -6,3 +6,4 @@ jdk:
 script:
  - ./gradlew --configure-on-demand javassist-plugin:install
  - ./gradlew javassist-samples:testTransforms
+ - ./gradlew javassist-plugin:jacocoTestReport javassist-plugin:coveralls
