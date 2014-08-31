@@ -2,12 +2,13 @@ package com.darylteo.gradle.javassist.transformers;
 
 import groovy.lang.Closure;
 import javassist.CtClass;
+import javassist.build.IClassTransformer;
 import javassist.build.JavassistBuildException;
 
 /**
  * Created by dteo on 28/05/2014.
  */
-public class GroovyClassTransformation extends ClassTransformer {
+public class GroovyClassTransformation implements IClassTransformer {
   private Closure transform;
   private Closure filter;
 
