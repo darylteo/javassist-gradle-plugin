@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * Created by dteo on 30/08/2014.
@@ -36,22 +38,42 @@ public class TestJavassistPlugin {
   }
 
   @Test
-  public void testEmptyTask() {
-    // this is a mock test just to try and get Jacoco to generate something
+  public void testNoConfigTask() {
     this.task.execute();
   }
 
   @Test
-  public void testBasicTaskWithBuildApi() {
-    IClassTransformer transformer = new BasicTransformer();
+  public void testNoTransformerTask() {
+    String srcDir = "build/classes";
 
-    this.task.from(this.project.file("build/classes"));
+    this.task.from(this.project.file(srcDir));
+    this.task.execute();
+
+    assert this.task.getDidWork() == false;
+  }
+
+
+  @Test
+  public void testBasicTaskWithBuildApi() throws Exception {
+    IClassTransformer transformer = new BasicTransformer();
+    String destDir = "build/transformations/transform";
+    String srcDir = "build/classes";
+
+    this.task.from(this.project.file(srcDir));
     this.task.setTransformation(transformer);
 
     this.task.execute();
 
-    assert this.project.file("build/transformations/transform").exists();
-    assert this.project.file("build/transformations/trasnform/TransformedSomeClass.class").exists();
+
+    assert this.project.file(destDir).exists();
+    assert this.project.file(destDir + "/TransformedSomeClass.class").exists();
+
+    URLClassLoader loader = new URLClassLoader(new URL[]{
+      this.project.file(destDir).toURI().toURL()
+    });
+
+    Class<?> clazz = loader.loadClass("TransformedSomeClass");
+    System.out.println(clazz.getName());
   }
 
   private class BasicTransformer implements IClassTransformer {
