@@ -64,7 +64,6 @@ public class TestJavassistPlugin {
 
     this.task.execute();
 
-
     assert this.project.file(destDir).exists();
     assert this.project.file(destDir + "/TransformedSomeClass.class").exists();
 
