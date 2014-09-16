@@ -28,7 +28,7 @@ public class TestJavassistPlugin {
     this.project = ProjectBuilder.builder().withProjectDir(new File("test-project")).build();
     this.project.getPlugins().apply(JavaPlugin.class);
 
-    System.out.println(this.project.getProjectDir());
+    //System.out.println(this.project.getProjectDir());
 
     ((DefaultTask) project.getTasks().getByPath("clean")).execute();
     ((DefaultTask) project.getTasks().getByPath("compileJava")).execute();
@@ -72,7 +72,35 @@ public class TestJavassistPlugin {
     });
 
     Class<?> clazz = loader.loadClass("TransformedSomeClass");
-    System.out.println(clazz.getName());
+    assert clazz.getName().equals("TransformedSomeClass");
+  }
+
+  @Test
+  public void testBasicTaskWithInheritance() throws Exception {
+    IClassTransformer transformer = new BasicTransformer() {
+      @Override public boolean shouldTransform(CtClass ctClass) throws JavassistBuildException {
+        return ctClass.getName().equals("ChildClass");
+      }
+    };
+
+    String destDir = "build/transformations/transform";
+    String srcDir = "build/classes/main";
+
+    this.task.from(this.project.file(srcDir));
+    this.task.setTransformation(transformer);
+
+    this.task.execute();
+
+    assert this.project.file(destDir).exists();
+    assert this.project.file(destDir + "/TransformedChildClass.class").exists();
+
+    URLClassLoader loader = new URLClassLoader(new URL[]{
+        this.project.file(destDir).toURI().toURL(),
+        this.project.file(srcDir).toURI().toURL(),
+    });
+
+    Class<?> clazz = loader.loadClass("TransformedChildClass");
+    assert clazz.getName().equals("TransformedChildClass");
   }
 
   private class BasicTransformer implements IClassTransformer {

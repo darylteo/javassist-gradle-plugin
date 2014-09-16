@@ -2,6 +2,7 @@ package com.darylteo.gradle.javassist.tasks;
 
 import com.darylteo.gradle.javassist.transformers.GroovyClassTransformation;
 import groovy.lang.Closure;
+import java.util.Collection;
 import javassist.build.IClassTransformer;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileTree;
@@ -83,10 +84,15 @@ public class TransformationTask extends DefaultTask {
 
   @TaskAction
   protected void exec() {
+    Collection<File> classPath = this.classpath.getFiles();
+    if (classesDir != null) {
+      classPath.add(this.getProject().file(classesDir));
+    }
+
     boolean workDone = new TransformationAction(
       this.getDestinationDir(),
       this.getSources().getFiles(),
-      this.classpath.getFiles(),
+      classPath,
       this.transformation
     ).execute();
 
