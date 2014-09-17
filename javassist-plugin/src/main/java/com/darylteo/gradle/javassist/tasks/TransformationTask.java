@@ -82,6 +82,10 @@ public class TransformationTask extends DefaultTask {
     this.destinationDir = dir;
   }
 
+  public void eachFile(Closure closure) {
+    closure.call(this.getSources().getFiles());
+  }
+
   @TaskAction
   protected void exec() {
     Collection<File> classPath = this.classpath.getFiles();
