@@ -2,6 +2,7 @@ package com.darylteo.gradle.javassist.tasks;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.Loader;
 import javassist.NotFoundException;
 import javassist.build.IClassTransformer;
 import org.gradle.api.GradleException;
@@ -58,7 +59,7 @@ class TransformationAction {
   }
 
   private ClassPool createPool() throws NotFoundException {
-    final ClassPool pool = new ClassPool(true);
+    final ClassPool pool = new AnnotationLoadingClassPool();
 
     // set up the classpath for the classpool
     if (classpath != null) {
@@ -106,4 +107,19 @@ class TransformationAction {
 
     return clazz;
   }
+
+    /**
+     * This class loader will load annotations encountered in loaded classes
+     * using the pool itself.
+     * @see <a href="https://github.com/jboss-javassist/javassist/pull/18">Javassist issue 18</a>
+     */
+    private static class AnnotationLoadingClassPool extends ClassPool {
+        public AnnotationLoadingClassPool() {
+            super(true);
+        }
+
+        @Override public ClassLoader getClassLoader() {
+            return new Loader(this);
+        }
+    }
 }
