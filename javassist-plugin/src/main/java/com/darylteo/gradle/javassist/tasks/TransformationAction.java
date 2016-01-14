@@ -21,7 +21,6 @@ class TransformationAction {
   private IClassTransformer transformation;
 
   private List<File> sources = new LinkedList<File>();
-  private List<CtClass> loadedClasses = new LinkedList<>();
   private Collection<File> classpath = new LinkedList<File>();
 
   public TransformationAction(File destinationDir, Collection<File> sources, Collection<File> classpath, IClassTransformer transformation) {
@@ -49,9 +48,9 @@ class TransformationAction {
     }
 
     try {
-      final ClassPool pool = createPool();
+      final List<CtClass> loadedClasses = preloadClasses();
 
-      this.process(pool, this.loadedClasses);
+      this.process(loadedClasses);
     } catch (Exception e) {
       throw new GradleException("Could not execute transformation", e);
     }
@@ -59,7 +58,8 @@ class TransformationAction {
     return true;
   }
 
-  private ClassPool createPool() throws NotFoundException, IOException {
+  private List<CtClass> preloadClasses() throws NotFoundException, IOException {
+    final List<CtClass> loadedClasses = new LinkedList<CtClass>();
     final ClassPool pool = new AnnotationLoadingClassPool();
 
     // set up the classpath for the classpool
@@ -75,16 +75,17 @@ class TransformationAction {
         loadedClasses.add(loadClassFile(pool, f));
       }
     }
-    return pool;
+
+    return loadedClasses;
   }
 
-  public void process(ClassPool pool, Collection<CtClass> classes) {
+  public void process(Collection<CtClass> classes) {
     for (CtClass clazz : classes) {
-      processClass(pool, clazz);
+      processClass(clazz);
     }
   }
 
-  public void processClass(ClassPool pool, CtClass clazz) {
+  public void processClass(CtClass clazz) {
     try {
       if (transformation.shouldTransform(clazz)) {
         clazz.defrost();
@@ -107,18 +108,18 @@ class TransformationAction {
     return clazz;
   }
 
-    /**
-     * This class loader will load annotations encountered in loaded classes
-     * using the pool itself.
-     * @see <a href="https://github.com/jboss-javassist/javassist/pull/18">Javassist issue 18</a>
-     */
-    private static class AnnotationLoadingClassPool extends ClassPool {
-        public AnnotationLoadingClassPool() {
-            super(true);
-        }
-
-        @Override public ClassLoader getClassLoader() {
-            return new Loader(this);
-        }
+  /**
+   * This class loader will load annotations encountered in loaded classes
+   * using the pool itself.
+   * @see <a href="https://github.com/jboss-javassist/javassist/pull/18">Javassist issue 18</a>
+   */
+  private static class AnnotationLoadingClassPool extends ClassPool {
+    public AnnotationLoadingClassPool() {
+      super(true);
     }
+
+    @Override public ClassLoader getClassLoader() {
+      return new Loader(this);
+    }
+  }
 }
