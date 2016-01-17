@@ -48,9 +48,9 @@ class TransformationAction {
     }
 
     try {
-      final ClassPool pool = createPool();
+      final List<CtClass> loadedClasses = preloadClasses();
 
-      this.process(pool, this.sources);
+      this.process(loadedClasses);
     } catch (Exception e) {
       throw new GradleException("Could not execute transformation", e);
     }
@@ -58,7 +58,8 @@ class TransformationAction {
     return true;
   }
 
-  private ClassPool createPool() throws NotFoundException {
+  private List<CtClass> preloadClasses() throws NotFoundException, IOException {
+    final List<CtClass> loadedClasses = new LinkedList<CtClass>();
     final ClassPool pool = new AnnotationLoadingClassPool();
 
     // set up the classpath for the classpool
@@ -70,27 +71,26 @@ class TransformationAction {
 
     // add the files to process
     for (File f : this.sources) {
-      pool.appendClassPath(f.toString());
+      if (!f.isDirectory()) {
+        loadedClasses.add(loadClassFile(pool, f));
+      }
     }
-    return pool;
+
+    return loadedClasses;
   }
 
-  public void process(ClassPool pool, Collection<File> files) {
-    for (File file : files) {
-      processFile(pool, file);
+  public void process(Collection<CtClass> classes) {
+    for (CtClass clazz : classes) {
+      processClass(clazz);
     }
   }
 
-  public void processFile(ClassPool pool, File file) {
+  public void processClass(CtClass clazz) {
     try {
-      if (!file.isDirectory()) {
-        CtClass clazz = loadClassFile(pool, file);
-
-        if (transformation.shouldTransform(clazz)) {
-          clazz.defrost();
-          transformation.applyTransformations(clazz);
-          clazz.writeFile(this.destinationDir.toString());
-        }
+      if (transformation.shouldTransform(clazz)) {
+        clazz.defrost();
+        transformation.applyTransformations(clazz);
+        clazz.writeFile(this.destinationDir.toString());
       }
     } catch (Exception e) {
       throw new GradleException("An error occurred while trying to process class file ", e);
@@ -108,18 +108,18 @@ class TransformationAction {
     return clazz;
   }
 
-    /**
-     * This class loader will load annotations encountered in loaded classes
-     * using the pool itself.
-     * @see <a href="https://github.com/jboss-javassist/javassist/pull/18">Javassist issue 18</a>
-     */
-    private static class AnnotationLoadingClassPool extends ClassPool {
-        public AnnotationLoadingClassPool() {
-            super(true);
-        }
-
-        @Override public ClassLoader getClassLoader() {
-            return new Loader(this);
-        }
+  /**
+   * This class loader will load annotations encountered in loaded classes
+   * using the pool itself.
+   * @see <a href="https://github.com/jboss-javassist/javassist/pull/18">Javassist issue 18</a>
+   */
+  private static class AnnotationLoadingClassPool extends ClassPool {
+    public AnnotationLoadingClassPool() {
+      super(true);
     }
+
+    @Override public ClassLoader getClassLoader() {
+      return new Loader(this);
+    }
+  }
 }
